@@ -184,7 +184,7 @@ function Spotify() {
                     <iframe src={`https://open.spotify.com/embed/track/${track.id}`} width="327" height="100" frameBorder="0" allowtransparency="true" allow="encrypted-media"></iframe>
                 </div>
             ))}
-            <p>unlop</p>
+
         </div>
 
     );
