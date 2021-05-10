@@ -8,7 +8,7 @@ function Header() {
     return (
         <div className='header'>
             <div className='header-title'>
-                < i className="fas fa-guitar"><span className='blogLogo'>キーで曲探しできるアプリ</span></i>
+                < i className="fas fa-guitar"><span className='blogLogo'>GeTracks</span></i>
 
             </div>
 
