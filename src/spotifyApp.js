@@ -8,7 +8,9 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
-import genres from './genres.js'
+import genres from './genres.js';
+import DropdownExamplePointingTwo from './components/dropdownTree.js';
+
 
 const useStyles = makeStyles({
     buttonStyle: {
@@ -115,7 +117,7 @@ function Spotify() {
 
             <div className='searchOption'>
                 {/* ジャンル検索　 */}
-
+                <DropdownExamplePointingTwo />
                 <FormControl >
                     <InputLabel >ジャンル</InputLabel>
                     <Select
@@ -170,7 +172,7 @@ function Spotify() {
                     variant="contained"
                     color='primary'
                     className={classes.buttonStyle}
-                    onClick={searchTracks}>Search Song</Button>
+                    onClick={searchTracks}>Search Tracks</Button>
             </div>
 
 
