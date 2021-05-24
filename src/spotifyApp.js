@@ -8,7 +8,8 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
-import genres from './genres.js'
+import genres from './genres.js';
+import Slider from '@material-ui/core/Slider';
 
 const useStyles = makeStyles({
     buttonStyle: {
@@ -16,8 +17,18 @@ const useStyles = makeStyles({
         marginTop: '10px',
     },
     selectStyle: {
-        width: '200px'
+        width: '200px',
+        marginTop: '10px',
+    },
+    sliderStyle: {
+        width: '200px',
+        color: '#455f72',
+    },
+    labelStyle: {
+        fontSize: '5px',
+        marginBottom: '5px'
     }
+
 
 });
 function Spotify() {
@@ -28,7 +39,7 @@ function Spotify() {
     const [key, setKey] = useState(0);
     const [mode, setMode] = useState(1);
 
-
+    const [popularity, setPopularity] = useState([20, 30]);
     //プルダウンで選択した値を表示し、httpリクエストのクエリに代入
     const genreChange = (event) => {
         setGenre(event.target.value);
@@ -39,6 +50,15 @@ function Spotify() {
     const modeChange = (event) => {
         setMode(event.target.value)
     };
+    //人気度についての関数
+    const maxPopularity = popularity[1];
+    const minPopularity = popularity[0];
+
+    const handleChange = (event, newValue) => {
+        setPopularity(newValue);
+
+    };
+
     //曲のキーを格納した配列
     const keys = [{ key: 'C', id: 0 },
     { key: 'D♭/C#', id: 1 },
@@ -59,8 +79,6 @@ function Spotify() {
     //apiで取った[{},{}...]を格納
     const [tracks, setTracks] = useState([]);
 
-    //Access Tokenが切れた時の対処をクライアントに提示
-    const [errorMessage, setErrorMessage] = useState('');
 
     // tokenを発行し、権限を付与
     // 付与されたTokenをuseStateのtokenに代入し、値を保持
@@ -84,11 +102,13 @@ function Spotify() {
     }, []);
     //SpotifyApiにアクセスしてtrackデータを取得
     const getTracaks = () =>
-        axios(`https://api.spotify.com/v1/recommendations?limit=10&market=US&seed_genres=${genre}&target_key=${key}&target_mode=${mode}`, {
+        axios(`https://api.spotify.com/v1/recommendations?limit=10&market=JP&seed_genres=${genre}&target_key=${key}&target_mode=${mode}&min_popularity=${minPopularity}&max_popularity=${maxPopularity}&seed_tracks=1qUhUzVHqproHHETlYFDcU`, {
             method: "GET",
             headers: { 'Authorization': "Bearer " + token },
         }).then(res => {
+            console.log(res.data.tracks)
             setTracks(res.data.tracks);
+
         })
 
     //Access Tokenを入手して、変数tracksに格納
@@ -103,13 +123,6 @@ function Spotify() {
             });
     };
 
-
-
-
-
-
-
-
     return (
         <div className='mannaka'>
 
@@ -117,7 +130,7 @@ function Spotify() {
                 {/* ジャンル検索　 */}
 
                 <FormControl >
-                    <InputLabel >ジャンル</InputLabel>
+                    <InputLabel>ジャンル</InputLabel>
                     <Select
                         value={genre}
                         onChange={genreChange}
@@ -130,7 +143,7 @@ function Spotify() {
                 </FormControl>
                 {/* 楽曲のキー指定 */}
                 <FormControl >
-                    <InputLabel >Key</InputLabel>
+                    <InputLabel  >Key</InputLabel>
                     <Select
                         value={key}
                         onChange={keyChange}
@@ -159,18 +172,27 @@ function Spotify() {
                     </Select>
                 </FormControl>
 
+                <div id='slider'>
+                    <InputLabel className={classes.labelStyle}>知名度</InputLabel>
+                    <Slider
+                        className={classes.sliderStyle}
+                        value={popularity}
+                        onChange={handleChange}
+                        valueLabelDisplay="auto"
+
+                    />
+                </div>
             </div>
-            <div>
-                <p className='errorMessage'>{errorMessage}
-                </p>
-            </div>
+
+
+
             <div className='buttons'>
                 {/* 検索ボタン */}
                 <Button
                     variant="contained"
                     color='primary'
                     className={classes.buttonStyle}
-                    onClick={searchTracks}>Search Song</Button>
+                    onClick={searchTracks}>Search Tracks</Button>
             </div>
 
 
@@ -180,8 +202,10 @@ function Spotify() {
                 <div className='song' key={track.id} >
                     <p>曲名:{track.name}</p>
                     <p>アーティスト名:{track.artists[0].name}</p>
+                    <p>知名度:{track.popularity}</p>
 
-                    <iframe src={`https://open.spotify.com/embed/track/${track.id}`} width="327" height="100" frameBorder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+
+                    <iframe src={`https://open.spotify.com/embed/track/${track.id}`} id='iframe' height="100" frameBorder="0" allowtransparency="true" allow="encrypted-media"></iframe>
                 </div>
             ))}
 

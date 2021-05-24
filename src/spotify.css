@@ -5,6 +5,13 @@
     flex-wrap: wrap;
 }
 
+#slider{
+    margin-top:10px ;
+    display: flex;
+    align-content: center;
+    flex-flow: column;
+}
+
 .song{
     margin-top: 10px;
     border-radius:11px ;
@@ -22,7 +29,13 @@
     justify-content: center;
 
 }
-.errorMessage{
-    color: red;
 
+#iframe{
+    width:80vw
+}
+
+@media screen and (min-width:700px){
+    #iframe{
+        width:400px
+    }
 }
