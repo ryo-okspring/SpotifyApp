@@ -2,7 +2,7 @@
 
 
 https://user-images.githubusercontent.com/82092800/121874326-3c694680-cd42-11eb-8094-080bdd17f580.mov
-
+![Uploading 画面収録-2021-06-14-19.34.03.gif…]()
 
 
 ## このアプリについて
