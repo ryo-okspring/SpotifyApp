@@ -1,8 +1,7 @@
 # GetTracks
 
 
-
-![Uploading 画面収録-2021-06-14-19.34.03.gif…]()
+![画面収録-2021-06-14-19 34 03](https://user-images.githubusercontent.com/82092800/121879776-2cecfc00-cd48-11eb-8f86-f79c53aee805.gif)
 
 
 ## このアプリについて
