@@ -18,6 +18,7 @@
 
 ## 特徴
 ・レスポンシブデザイン<br>
+<img width="200" alt="スクリーンショット 2021-06-14 19 44 39" src="https://user-images.githubusercontent.com/82092800/121880514-11362580-cd49-11eb-951c-a04d01bc5da4.png">
 ・Reactで制作<br>
 
 
