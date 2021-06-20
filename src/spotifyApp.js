@@ -10,6 +10,7 @@ import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import genres from './genres.js';
 import Slider from '@material-ui/core/Slider';
+import CircularProgress from '@material-ui/core/CircularProgress'
 
 const useStyles = makeStyles({
     buttonStyle: {
@@ -22,15 +23,35 @@ const useStyles = makeStyles({
     },
     sliderStyle: {
         width: '200px',
-        color: '#455f72',
+        color: '#608db1',
     },
     labelStyle: {
         fontSize: '5px',
         marginBottom: '5px'
+    },
+    loading: {
+        margin: '10px',
+        display: 'flex',
+        justifyContent: 'center'
     }
 
 
 });
+
+//曲のキーを格納した配列
+const keys = [{ key: 'C', id: 0 },
+{ key: 'D♭/C#', id: 1 },
+{ key: 'D', id: 2 },
+{ key: 'E♭/D#', id: 3 },
+{ key: 'E', id: 4 },
+{ key: 'F', id: 5 },
+{ key: 'F♯/G♭', id: 6 },
+{ key: 'G', id: 7 },
+{ key: 'A♭/G#', id: 8 },
+{ key: 'A', id: 9 },
+{ key: 'B♭/A#', id: 10 },
+{ key: 'B', id: 11 }];
+
 function Spotify() {
     //Muiのstyle
     const classes = useStyles();
@@ -39,40 +60,37 @@ function Spotify() {
     const [key, setKey] = useState(0);
     const [mode, setMode] = useState(1);
 
-    const [popularity, setPopularity] = useState([20, 30]);
+
     //プルダウンで選択した値を表示し、httpリクエストのクエリに代入
-    const genreChange = (event) => {
+    const changeGenre = (event) => {
         setGenre(event.target.value);
     };
-    const keyChange = (event) => {
+    const changeKey = (event) => {
         setKey(event.target.value);
     };
-    const modeChange = (event) => {
+    const changeMode = (event) => {
         setMode(event.target.value)
     };
-    //人気度についての関数
-    const maxPopularity = popularity[1];
+    //人気度についての変数、関数
+    const [popularity, setPopularity] = useState([1, 100]);
     const minPopularity = popularity[0];
+    const maxPopularity = popularity[1];
 
     const handleChange = (event, newValue) => {
         setPopularity(newValue);
-
     };
+    /**検索して表示する曲数を管理 */
+    /** 一回「search　tracks」がクリックされたらずっとtrue*/
+    const [firstClick, setFirstClick] = useState(false);
+    /**検索結果件数を表示 */
+    const [numOfResult, setNumOfResult] = useState('');
 
-    //曲のキーを格納した配列
-    const keys = [{ key: 'C', id: 0 },
-    { key: 'D♭/C#', id: 1 },
-    { key: 'D', id: 2 },
-    { key: 'E♭/D#', id: 3 },
-    { key: 'E', id: 4 },
-    { key: 'F', id: 5 },
-    { key: 'F♯/G♭', id: 6 },
-    { key: 'G', id: 7 },
-    { key: 'A♭/G#', id: 8 },
-    { key: 'A', id: 9 },
-    { key: 'B♭/A#', id: 10 },
-    { key: 'B', id: 11 }];
+    /**エラーの内容を管理、表示 */
 
+
+
+    //loadingアイコン
+    const [loading, setLoading] = useState(false);
     //access token の値を格納
     const [token, setToken] = useState("");
 
@@ -100,28 +118,43 @@ function Spotify() {
         getAccessToken();
 
     }, []);
-    //SpotifyApiにアクセスしてtrackデータを取得
-    const getTracaks = () =>
-        axios(`https://api.spotify.com/v1/recommendations?limit=10&market=JP&seed_genres=${genre}&target_key=${key}&target_mode=${mode}&min_popularity=${minPopularity}&max_popularity=${maxPopularity}&seed_tracks=1qUhUzVHqproHHETlYFDcU`, {
+    /** SpotifyApiにアクセスしてtrackデータを取得 */
+
+
+    /** Access Tokenを入手して、変数tracksに格納 */
+    const searchTracks = async () => {
+
+        setLoading(true);
+        await axios(`https://api.spotify.com/v1/recommendations?limit=10&market=JP&seed_genres=${genre}&target_key=${key}&target_mode=${mode}&min_popularity=${minPopularity}&max_popularity=${maxPopularity}&seed_tracks=1qUhUzVHqproHHETlYFDcU`, {
             method: "GET",
             headers: { 'Authorization': "Bearer " + token },
-        }).then(res => {
-            console.log(res.data.tracks)
-            setTracks(res.data.tracks);
-
         })
+            .then(res => {
+                setFirstClick(true);
+                setTracks(res.data.tracks);
 
-    //Access Tokenを入手して、変数tracksに格納
-    const searchTracks = () => {
-        getTracaks()
+            })
             .catch(error => {
                 console.log(error.response);
                 if (error.response.status === 401) {
                     getAccessToken();
-                    getTracaks();
+                    console.log('access tokenが更新されました')
                 };
             });
+
+        setLoading(false);
     };
+
+    useEffect(() => {
+        console.log(tracks);
+        if (tracks.length <= 0) {
+            setNumOfResult('検索結果がありませんでした');
+        } else if (tracks.length === 1) {
+            setNumOfResult('1件の曲を表示')
+        } else {
+            setNumOfResult(`1~${tracks.length}件を表示`);
+        }
+    }, [tracks])
 
     return (
         <div className='mannaka'>
@@ -133,7 +166,7 @@ function Spotify() {
                     <InputLabel>ジャンル</InputLabel>
                     <Select
                         value={genre}
-                        onChange={genreChange}
+                        onChange={changeGenre}
                         className={classes.selectStyle}
                     >
                         {genres.map((genre) => (
@@ -146,7 +179,7 @@ function Spotify() {
                     <InputLabel  >Key</InputLabel>
                     <Select
                         value={key}
-                        onChange={keyChange}
+                        onChange={changeKey}
                         className={classes.selectStyle}
                     >
 
@@ -163,7 +196,7 @@ function Spotify() {
                     <InputLabel >major/minor</InputLabel>
                     <Select
                         value={mode}
-                        onChange={modeChange}
+                        onChange={changeMode}
 
                         className={classes.selectStyle}
                     >
@@ -192,13 +225,21 @@ function Spotify() {
                     variant="contained"
                     color='primary'
                     className={classes.buttonStyle}
-                    onClick={searchTracks}>Search Tracks</Button>
+                    onClick={searchTracks}
+                    disabled={loading}
+                >Search Tracks</Button>
             </div>
 
 
 
+
+            {/* ローディングマークを表示 */}
+            {loading && <div className={classes.loading}><CircularProgress color='secondary' size='6rem' /></div>}
+            {/* 検索件数を表示 */}
+            <p>{firstClick && numOfResult}</p>
             {/* apiで獲得した曲のデータをmapで回して表示 */}
-            {tracks.map((track) => (
+            {tracks.map(track => (
+
                 <div className='song' key={track.id} >
                     <p>曲名:{track.name}</p>
                     <p>アーティスト名:{track.artists[0].name}</p>
@@ -207,7 +248,8 @@ function Spotify() {
 
                     <iframe src={`https://open.spotify.com/embed/track/${track.id}`} id='iframe' height="100" frameBorder="0" allowtransparency="true" allow="encrypted-media"></iframe>
                 </div>
-            ))}
+            ))
+            }
 
         </div>
 
