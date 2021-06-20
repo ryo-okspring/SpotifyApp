@@ -1,11 +1,11 @@
 
-var axios = require('axios');
-var btoa = require('btoa');
+const axios = require('axios');
+const btoa = require('btoa');
 
 
 exports.handler = async (event, context, callback) => {
-    var client_id = 'c14dbd93871d4df5ae2daadac6b9aea2';
-    var client_secret = '1ca90c4ebfb445bda075f8087b688279';
+    const client_id = process.env.CLIENT_ID;
+    const client_secret = process.env.CLIENT_SECRET;
 
     const config = {
         headers: {
@@ -18,28 +18,23 @@ exports.handler = async (event, context, callback) => {
         method: "POST",
     };
     const url = "https://accounts.spotify.com/api/token";
-    const data = axios(url, config).then(({ data }) => {
+    const result = axios(url, config).then(response => {
 
-        callback(null, {
+        return ({
             statusCode: 200,
-            body: JSON.stringify(data)
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                'Authorization':
+                    "Basic " + btoa(client_id + ":" + client_secret),
+                "Access-Control-Allow-Headers": "Content-Type",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
+            },
+            body: JSON.stringify(response.data)
         });
-    })
-        .catch(callback);
-    console.log('data', data);
-    const response = {
-        statusCode: 200,
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-            'Authorization':
-                "Basic " + btoa(client_id + ":" + client_secret),
-            "Access-Control-Allow-Headers": "Content-Type",
-            "Access-Control-Allow-Origin": "http://localhost:3000",
-            "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
-        },
-        body: JSON.stringify(data)
-    };
+    }).catch(err => { console.log('err', err); });
 
-    return data;
+
+    return result;
 };
 
