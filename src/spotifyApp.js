@@ -8,7 +8,7 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
-import genres from './genres.js';
+import genres from './components/genres.js';
 import Slider from '@material-ui/core/Slider';
 import CircularProgress from '@material-ui/core/CircularProgress'
 
