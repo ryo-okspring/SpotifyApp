@@ -85,7 +85,7 @@ function Spotify() {
     /**検索結果件数を表示 */
     const [numOfResult, setNumOfResult] = useState('');
 
-    /**エラーの内容を管理、表示 */
+
 
 
 
