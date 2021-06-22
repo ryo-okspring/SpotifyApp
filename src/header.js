@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import "./App.css";
-import HamburgerIcon from "./hamburgerIcon.js";
-import HamburgerMenu from './hamburgerMenu.js';
+import HamburgerIcon from "./components/hamburgerIcon.js";
+import HamburgerMenu from './components/hamburgerMenu.js';
 
 function Header() {
 
