@@ -8,11 +8,7 @@ function Header() {
     return (
         <div className='header'>
             <div className='header-title'>
-<<<<<<< HEAD
-                < i className="fas fa-guitar"><span className='blogLogo'>GeTruck</span></i>
-=======
                 < i className="fas fa-guitar"><span className='blogLogo'>GeTracks</span></i>
->>>>>>> ccc70baa083f1afd4d87228863952043935f861c
 
             </div>
 
